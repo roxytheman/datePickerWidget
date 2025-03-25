@@ -1,0 +1,386 @@
+// datePicker 1.0.6
+// Select single dates or date ranges with this customizable calendar widget
+// See Parameter Definitions Below
+
+Let ( [
+
+		~html = 
+		
+		"			<!DOCTYPE html>" & ¶ &
+		"			<html lang=\"en\">" & ¶ &
+		"			<head>" & ¶ &
+		"			<meta charset=\"UTF-8\">" & ¶ &
+		"			<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">" & ¶ &
+		"			<title>Calendar Widget</title>" & ¶ &
+		"			<style>" & ¶ &
+		"				:root {" & ¶ &
+		"					--colour-background: {{colour-background}};" & ¶ &
+		"					--colour-selected: {{colour-selected}};" & ¶ &
+		"					--colour-range: {{colour-range}};" & ¶ &
+		"					--colour-dates: {{colour-dates}};" & ¶ &
+		"					--colour-adjacent-dates: {{colour-adjacent-dates}};" & ¶ &
+		"					--colour-weekdays: {{colour-weekdays}};" & ¶ &
+		"					--font-dates: {{font-dates}};" & ¶ &
+		"					--font-week: {{font-week}};" & ¶ &
+		"					--scale-factor: {{scale-factor}};" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				body {" & ¶ &
+		"					background: var(--colour-background);" & ¶ &
+		"					font-family: var(--font-dates);" & ¶ &
+		"					margin: 0;" & ¶ &
+		"					padding: 0;" & ¶ &
+		"					display: flex;" & ¶ &
+		"					justify-content: center;" & ¶ &
+		"					align-items: flex-start;" & ¶ &
+		"					height: 100vh;" & ¶ &
+		"					align-items: flex-start;" & ¶ &
+		"					min-height: 100vh;" & ¶ &
+		"					transform: scale(var(--scale-factor));" & ¶ &
+		"					overflow: hidden;" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				.calendar {" & ¶ &
+		"					box-sizing: border-box;" & ¶ &
+		"					padding: 0px;" & ¶ &
+		"					max-width: 320px;" & ¶ &
+		"					margin: 0 auto;" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				.calendar-header {" & ¶ &
+		"					display: flex;" & ¶ &
+		"					justify-content: space-between;" & ¶ &
+		"					align-items: center;" & ¶ &
+		"					font-family: var(--font-week);" & ¶ &
+		"					font-weight: bold;" & ¶ &
+		"					margin-bottom: 10px;" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				.calendar-header button {" & ¶ &
+		"					background: none;" & ¶ &
+		"					border: none;" & ¶ &
+		"					cursor: pointer;" & ¶ &
+		"					font-size: 18px;" & ¶ &
+		"					color: var(--colour-dates);" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				.calendar-header .month-name {" & ¶ &
+		"					cursor: pointer;" & ¶ &
+		"					font-weight: bold;" & ¶ &
+		"					color: var(--colour-weekdays);" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				.calendar-weekdays, .calendar-days {" & ¶ &
+		"					display: grid;" & ¶ &
+		"					grid-template-columns: repeat(7, 1fr);" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				.calendar-weekdays div, .calendar-days div {" & ¶ &
+		"					text-align: center;" & ¶ &
+		"					padding: 10px;" & ¶ &
+		"					font-size: 14px;" & ¶ &
+		"					cursor: pointer;" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				.calendar-weekdays div {" & ¶ &
+		"					font-family: var(--font-week);" & ¶ &
+		"					color: var(--colour-weekdays);" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				.calendar-days div:hover {" & ¶ &
+		"					background: var(--colour-range);" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				.other-month {" & ¶ &
+		"					color: var(--colour-adjacent-dates);" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				.today {" & ¶ &
+		"					font-weight: bold;" & ¶ &
+		"					border: 1px solid var(--colour-selected);" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				.start-date, .end-date {" & ¶ &
+		"					background: var(--colour-selected) !important;" & ¶ &
+		"					color: #fff !important;" & ¶ &
+		"					font-weight: bold;" & ¶ &
+		"					border-radius: 4px;" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				.in-range {" & ¶ &
+		"					background: var(--colour-range);" & ¶ &
+		"					color: var(--colour-dates);" & ¶ &
+		"				}" & ¶ &
+		"			</style>" & ¶ &
+		"			</head>" & ¶ &
+		"			<body>" & ¶ &
+		"			" & ¶ &
+		"			<div class=\"calendar\">" & ¶ &
+		"				<div class=\"calendar-header\">" & ¶ &
+		"					<button onclick=\"prevYear()\">«</button>" & ¶ &
+		"					<button onclick=\"prevMonth()\">‹</button>" & ¶ &
+		"					<div id=\"month-year\" class=\"month-name\" onclick=\"jumpToCurrentMonth()\"></div>" & ¶ &
+		"					<button onclick=\"nextMonth()\">›</button>" & ¶ &
+		"					<button onclick=\"nextYear()\">»</button>" & ¶ &
+		"				</div>" & ¶ &
+		"				<div class=\"calendar-weekdays\"></div>" & ¶ &
+		"				<div class=\"calendar-days\"></div>" & ¶ &
+		"			</div>" & ¶ &
+		"			" & ¶ &
+		"			<script>" & ¶ &
+		"				let currentDate = new Date();" & ¶ &
+		"				let startDate = {{dateStart}};" & ¶ &
+		"				let endDate = {{dateEnd}};" & ¶ &
+		"				let isDateRange = {{isDateRange}};" & ¶ &
+		"				let fileMakerScript = \"{{fileMakerScript}}\";" & ¶ &
+		"			" & ¶ &
+		"				window.targetStart = \"\";" & ¶ &
+		"				window.targetEnd = \"\";" & ¶ &
+		"				window.refreshData = {};" & ¶ &
+		"			" & ¶ &
+		"				//  Validate date before parsing" & ¶ &
+		"				function isValidDateString(dateStr) {" & ¶ &
+		"					const regex = /^\d{4}\+\d{2}\+\d{2}$/;  // Validate YYYY+MM+DD format" & ¶ &
+		"					return dateStr && regex.test(dateStr);" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				//  Inject values from FileMaker" & ¶ &
+		"				function injectValues(start, end, refresh, rangeMode = true) {" & ¶ &
+		"					window.targetStart = start || \"{{targetDateStart}}\";" & ¶ &
+		"					window.targetEnd = end || \"{{targetDateEnd}}\";" & ¶ &
+		"					window.refreshData = refresh || {};" & ¶ &
+		"					isDateRange = rangeMode;  " & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				//  Load and render calendar with injected values" & ¶ &
+		"				function loadCalendar(input = '{}') {" & ¶ &
+		"					try {" & ¶ &
+		"						const params = JSON.parse(input);" & ¶ &
+		"			" & ¶ &
+		"						injectValues(" & ¶ &
+		"							params.targetStart," & ¶ &
+		"							params.targetEnd," & ¶ &
+		"							params.refresh," & ¶ &
+		"							params.isDateRange ?? true" & ¶ &
+		"						);" & ¶ &
+		"			" & ¶ &
+		"						if (isValidDateString(params.dateStart)) {" & ¶ &
+		"							const [year, month, day] = params.dateStart.split('+').map(Number);" & ¶ &
+		"							startDate = new Date(Date.UTC(year, month - 1, day));" & ¶ &
+		"							currentDate = new Date(Date.UTC(year, month - 1, 1));  // Center the view" & ¶ &
+		"						}" & ¶ &
+		"			" & ¶ &
+		"						if (isValidDateString(params.dateEnd)) {" & ¶ &
+		"							const [year, month, day] = params.dateEnd.split('+').map(Number);" & ¶ &
+		"							endDate = new Date(Date.UTC(year, month - 1, day));" & ¶ &
+		"						}" & ¶ &
+		"			" & ¶ &
+		"						renderCalendar();" & ¶ &
+		"					} catch (error) {" & ¶ &
+		"						console.error(\"Invalid JSON input:\", error);" & ¶ &
+		"					}" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		
+		
+		"				function renderCalendar() {" & ¶ &
+		"				    const monthYear = document.getElementById(\"month-year\");" & ¶ &
+		"				    const daysContainer = document.querySelector(\".calendar-days\");" & ¶ &
+		"				    const weekdaysContainer = document.querySelector(\".calendar-weekdays\");" & ¶ &
+		"				" & ¶ &
+		"				    // Display the current month and year" & ¶ &
+		"				    monthYear.textContent = `${currentDate.toLocaleString('default', { month: 'long' })} ${currentDate.getUTCFullYear()}`;" & ¶ &
+		"				    weekdaysContainer.innerHTML = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']" & ¶ &
+		"				        .map(day => `<div>${day}</div>`).join('');" & ¶ &
+		"				" & ¶ &
+		"				    daysContainer.innerHTML = '';" & ¶ &
+		"				" & ¶ &
+		"				    // Get the first and last day of the current month" & ¶ &
+		"				    const firstDay = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), 1)).getUTCDay();" & ¶ &
+		"				    const lastDate = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth() + 1, 0)).getUTCDate();" & ¶ &
+		"				" & ¶ &
+		"				    // Previous month's trailing days (correct amount)" & ¶ &
+		"				    const prevMonthLastDate = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), 0)).getUTCDate();" & ¶ &
+		"				    for (let i = firstDay; i > 0; i--) {" & ¶ &
+		"				        daysContainer.innerHTML += `<div class=\"other-month\">${prevMonthLastDate - i + 1}</div>`;" & ¶ &
+		"				    }" & ¶ &
+		"				" & ¶ &
+		"				    // Render current month days with selection and range highlighting" & ¶ &
+		"				    for (let day = 1; day <= lastDate; day++) {" & ¶ &
+		"				        const date = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), day));" & ¶ &
+		"				" & ¶ &
+		"				        const classes = [];" & ¶ &
+		"				" & ¶ &
+		"				        // Highlight today's date (UTC-safe)" & ¶ &
+		"				        const today = new Date(Date.UTC(" & ¶ &
+		"				            new Date().getUTCFullYear()," & ¶ &
+		"				            new Date().getUTCMonth()," & ¶ &
+		"				            new Date().getUTCDate()" & ¶ &
+		"				        ));" & ¶ &
+		"				        if (date.getTime() === today.getTime()) classes.push('today');" & ¶ &
+		"				" & ¶ &
+		"				        // Highlight selected dates and range" & ¶ &
+		"				        const isStart = startDate && date.getTime() === startDate.getTime();" & ¶ &
+		"				        const isEnd = endDate && date.getTime() === endDate.getTime();" & ¶ &
+		"				        const inRange = startDate && endDate && date > startDate && date < endDate;" & ¶ &
+		"				" & ¶ &
+		"				        if (isDateRange) {" & ¶ &
+		"				            if (isStart) classes.push('start-date');" & ¶ &
+		"				            if (isEnd) classes.push('end-date');" & ¶ &
+		"				            if (inRange) classes.push('in-range');" & ¶ &
+		"				        } else {" & ¶ &
+		"				            if (isStart) classes.push('start-date');" & ¶ &
+		"				        }" & ¶ &
+		"				" & ¶ &
+		"				        daysContainer.innerHTML += `" & ¶ &
+		"				            <div onclick=\"selectDate(${day})\" class=\"${classes.join(' ')}\">" & ¶ &
+		"				                ${day}" & ¶ &
+		"				            </div>`;" & ¶ &
+		"				    }" & ¶ &
+		"				" & ¶ &
+		"				    // Fill the next month's trailing days" & ¶ &
+		"				    const totalCells = firstDay + lastDate;  " & ¶ &
+		"				    const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);  " & ¶ &
+		"				" & ¶ &
+		"				    for (let i = 1; i <= remainingCells; i++) {" & ¶ &
+		"				        daysContainer.innerHTML += `<div class=\"other-month\">${i}</div>`;" & ¶ &
+		"				    }" & ¶ &
+		"				}" & ¶ &
+		"				" & ¶ &
+		"				//  Select date function" & ¶ &
+		"				function selectDate(day) {" & ¶ &
+		"					const date = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), day));" & ¶ &
+		"			" & ¶ &
+		"					if (isDateRange) {" & ¶ &
+		"						if (!startDate) {" & ¶ &
+		"							startDate = date;" & ¶ &
+		"						} else if (!endDate) {" & ¶ &
+		"							endDate = date;" & ¶ &
+		"							sendToFileMaker();" & ¶ &
+		"						} else {" & ¶ &
+		"							startDate = date;" & ¶ &
+		"							endDate = null;" & ¶ &
+		"						}" & ¶ &
+		"					} else {" & ¶ &
+		"						startDate = date;" & ¶ &
+		"						endDate = null;" & ¶ &
+		"						sendToFileMaker();" & ¶ &
+		"					}" & ¶ &
+		"			" & ¶ &
+		"					// Center the view on the selected date" & ¶ &
+		"					if (startDate) {" & ¶ &
+		"						currentDate = new Date(startDate);  // Center the view on the start date" & ¶ &
+		"					} else {" & ¶ &
+		"						currentDate = new Date();  // Fallback to the current month" & ¶ &
+		"					}" & ¶ &
+		"					renderCalendar();" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				//  Send date data to FileMaker" & ¶ &
+		"				function sendToFileMaker() {" & ¶ &
+		"					const formatDate = (date) => date.toISOString().split('T')[0].replace(/-/g, '+');" & ¶ &
+		"			" & ¶ &
+		"					const payload = {" & ¶ &
+		"						dateStart: startDate ? formatDate(startDate) : \"\"," & ¶ &
+		"						dateEnd: endDate ? formatDate(endDate) : \"\"," & ¶ &
+		"						targetStart: window.targetStart || \"{{targetDateStart}}\", " & ¶ &
+		"						targetEnd: window.targetEnd || \"{{targetDateEnd}}\"," & ¶ &
+		"						refresh: window.refreshData || {}" & ¶ &
+		"					};" & ¶ &
+		"			" & ¶ &
+		"					window.FileMaker.PerformScript(fileMakerScript, JSON.stringify(payload));" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				// Center the view on the selected date" & ¶ &
+		"				if (startDate) {" & ¶ &
+		"					currentDate = new Date(startDate);  // Center the view on the start date" & ¶ &
+		"				} else {" & ¶ &
+		"					currentDate = new Date();  // Fallback to the current month" & ¶ &
+		"				}" & ¶ &
+		"				renderCalendar();" & ¶ &
+		"				" & ¶ &
+		"				//  Navigation functions" & ¶ &
+		"				function prevMonth() { currentDate.setUTCMonth(currentDate.getUTCMonth() - 1); renderCalendar(); }" & ¶ &
+		"				function nextMonth() { currentDate.setUTCMonth(currentDate.getUTCMonth() + 1); renderCalendar(); }" & ¶ &
+		"				function prevYear() { currentDate.setUTCFullYear(currentDate.getUTCFullYear() - 1); renderCalendar(); }" & ¶ &
+		"				function nextYear() { currentDate.setUTCFullYear(currentDate.getUTCFullYear() + 1); renderCalendar(); }" & ¶ &
+		"				function jumpToCurrentMonth() { currentDate = new Date(); renderCalendar(); }" & ¶ &
+		"			" & ¶ &
+		"					// Center the view on the selected date" & ¶ &
+		"					if (startDate) {" & ¶ &
+		"						currentDate = new Date(startDate);  // Center the view on the start date" & ¶ &
+		"					} else {" & ¶ &
+		"						currentDate = new Date();  // Fallback to the current month" & ¶ &
+		"					}" & ¶ &
+		"				renderCalendar();" & ¶ &
+		"				" & ¶ &
+		"			</script>" & ¶ &
+		"			</body>" & ¶ &
+		"			</html>"
+			
+			;
+
+			~colourBackground = If ( IsEmpty ( colourBackground ) ; "#FFFFFF" ; colourBackground ) ;
+			~colourSelected = If ( IsEmpty ( colourSelected ) ; "#000000" ; colourSelected ) ;
+			~colourRange = If ( IsEmpty ( colourRange ) ; "#e6e6e6" ; colourRange ) ;
+			~colourDates = If ( IsEmpty ( colourDates ) ; "#000000" ; colourDates ) ;
+			~colourAdjacentDates = If ( IsEmpty ( colourAdjacentDates ) ; "#CCCCCC" ; colourAdjacentDates ) ;
+			~colourWeekdays = If ( IsEmpty ( colourWeekdays ) ; "#000000" ; colourWeekdays ) ;
+			~fontDates = If ( IsEmpty ( fontDates ) ; "\"Helvetica Neue\", sans-serif" ; fontDates ) ;
+			~fontWeek = If ( IsEmpty ( fontWeek ) ; "\"Helvetica Neue Bold\", sans-serif" ; fontWeek ) ;
+			~scaleFactor = If ( IsEmpty ( scaleFactor ) ; 1 ; scaleFactor ) ;
+			~dateStart = If ( IsEmpty ( dateStart ) ; Let ( [ ~dt = Get( CurrentDate ) ; ~y = Year ( ~dt ) ; ~m = Month ( ~dt ) - 1 ; ~d = Day ( ~dt ) ] ; "new Date(Date.UTC(" & ~y & ", " & ~m & ", " & ~d & "))")  ; Let ( [ ~dt = dateStart; ~y = Year ( ~dt ) ; ~m = Month ( ~dt ) - 1 ; ~d = Day ( ~dt ) ] ; "new Date(Date.UTC(" & ~y & ", " & ~m & ", " & ~d & "))") ) ;
+			~dateEnd = If ( IsEmpty ( dateEnd ) ; "null" ; Let ( [ ~dt = dateEnd; ~y = Year ( ~dt ) ; ~m = Month ( ~dt ) - 1 ; ~d = Day ( ~dt ) ] ; "new Date(Date.UTC(" & ~y & ", " & ~m & ", " & ~d & "))") ) ;
+			~isDateRange = If ( IsEmpty ( isDateRange ) ; "false" ; Lower( isDateRange ) ) ;
+			~fileMakerScript = If ( IsEmpty ( fileMakerScript ) ; "CAL_responseHandler" ; fileMakerScript ) ;
+			~targetDateStart = targetDateStart ;
+			~targetDateEnd = targetDateEnd ; 
+		
+		~calendar = Substitute ( ~html ; 
+		
+			[ "{{fileMakerScript}}" ; ~fileMakerScript ] ;
+			[ "{{dateStart}}" ; ~dateStart ] ;
+			[ "{{dateEnd}}" ; ~dateEnd ] ;
+			[ "{{targetDateStart}}" ; ~TargetDateStart ] ;
+			[ "{{targetDateEnd}}" ; ~TargetDateEnd ] ;
+			[ "{{isDateRange}}" ; ~isDateRange ] ;
+			[ "{{colour-background}}" ; ~colourBackground ] ;
+			[ "{{colour-selected}}" ; ~colourSelected ] ;
+			[ "{{colour-range}}" ; ~colourRange ] ;
+			[ "{{colour-dates}}" ; ~colourDates ] ;
+			[ "{{colour-adjacent-dates}}" ; ~colourAdjacentDates ] ;
+			[ "{{colour-weekdays}}" ; ~colourWeekdays ] ;
+			[ "{{font-dates}}" ; ~fontDates ] ;
+			[ "{{font-week}}" ; ~fontWeek ] ;
+			[ "{{scale-factor}}" ; ~scaleFactor ]
+		
+		)
+
+	] ; 
+
+
+			"data:text/html," & ~calendar
+
+)
+
+// Parameter Definitions
+
+// fileMakerScript : Name of FileMaker script to launch upon selecting date(s) ( CAL_responseHandler )
+// dateStart : Initialising start date
+// dateEnd : Initialising end date (optional when calendar is in range mode)
+// isDateRange : Boolean ( true or false ) passed as string
+// targetDateStart : Field name in given in current context ( myTable::dateStart )
+// targetDateEnd : Field name in given in current context ( myTable::dateEnd )
+// colourBackground : Hexadecimal colour code ( #FFFFFF )
+// colourSelected : Hexadecimal colour code ( #000000 )
+// colourRange : Hexadecimal colour code ( #e6e6e6 )
+// colourDates : Hexadecimal colour code ( #000000 )
+// colourAdjacentDates : Hexadecimal colour code ( #CCCCCC )
+// colourWeekdays : Hexadecimal colour code ( #000000 )
+// fontDates : Fonts used to display dates in calendar ( \"Helvetica Neue\", sans-serif )
+// fontWeek : Fonts used to display dates in calendar ( \"Helvetica Neue Bold\", sans-serif )
+// scaleFactor : Factor used to scale the calendar widget ( 1.0 )
+
+// BD Link : https://www.briandunning.com/cf/2797
+// Written by: jonni@me.com
+// V 1.0.6
