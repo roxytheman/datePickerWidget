@@ -33,9 +33,8 @@ Let ( [
 		"					padding: 0;" & ¶ &
 		"					display: flex;" & ¶ &
 		"					justify-content: center;" & ¶ &
-		"					align-items: flex-start;" & ¶ &
 		"					height: 100vh;" & ¶ &
-		"					align-items: flex-start;" & ¶ &
+		"					align-items: start;" & ¶ &
 		"					min-height: 100vh;" & ¶ &
 		"					transform: scale(var(--scale-factor));" & ¶ &
 		"					overflow: hidden;" & ¶ &
@@ -48,15 +47,57 @@ Let ( [
 		"					margin: 0 auto;" & ¶ &
 		"				}" & ¶ &
 		"			" & ¶ &
-		"				.calendar-header {" & ¶ &
+		"				.header-date {" & ¶ &
 		"					display: flex;" & ¶ &
-		"					justify-content: space-between;" & ¶ &
-		"					align-items: center;" & ¶ &
-		"					font-family: var(--font-week);" & ¶ &
-		"					font-weight: bold;" & ¶ &
-		"					margin-bottom: 10px;" & ¶ &
+		"					flex-direction: column;" & ¶ &
+		"					line-height: 1.1;" & ¶ &
+		"					font-size: 22px;" & ¶ &
+		"					text-transform: capitalize;" & ¶ &
 		"				}" & ¶ &
 		"			" & ¶ &
+		"				.header-date .month {" & ¶ &
+		"					font-size: 28px;" & ¶ &
+		"					font-weight: bold;" & ¶ &
+		"				}		" & ¶ &
+		"			" & ¶ &
+		"				.header-date .year {" & ¶ &
+		"					font-size: 18px;" & ¶ &
+		"					font-weight: bold;" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				.header-buttons {" & ¶ &
+		"					display: flex;" & ¶ &
+		"					align-items: center;" & ¶ &
+		"					gap: 10px;" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				.header-buttons button {" & ¶ &
+		"					background: none;" & ¶ &
+		"					border: none;" & ¶ &
+		"					cursor: pointer;" & ¶ &
+		"					font-size: 20px;" & ¶ &
+		"					color: var(--colour-dates);" & ¶ &
+		"					transition: color 0.2s ease;" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				.header-buttons button:hover {" & ¶ &
+		"					color: var(--colour-selected);" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				.header-buttons .dot {" & ¶ &
+		"					display: inline-block;" & ¶ &
+		"					width: 12px;" & ¶ &
+		"					height: 12px;" & ¶ &
+		"					background: var(--colour-dates);" & ¶ &
+		"					border-radius: 50%;" & ¶ &
+		"					cursor: pointer;" & ¶ &
+		"					transition: background 0.2s;" & ¶ &
+		"				}" & ¶ &
+		"			" & ¶ &
+		"				.header-buttons .dot:hover {" & ¶ &
+		"					background: var(--colour-selected);" & ¶ &
+		"				}" & ¶ &
+		"		" & ¶ &
 		"				.calendar-header button {" & ¶ &
 		"					background: none;" & ¶ &
 		"					border: none;" & ¶ &
@@ -70,6 +111,51 @@ Let ( [
 		"					font-weight: bold;" & ¶ &
 		"					color: var(--colour-weekdays);" & ¶ &
 		"				}" & ¶ &
+		"			" & ¶ &
+		
+		"				.calendar-header {" & ¶ &
+		"					display: flex;" & ¶ &
+		"					justify-content: space-between;" & ¶ &
+		"					align-items: end;" & ¶ &
+		"					margin-bottom: 10px;" & ¶ &
+		"				}" & ¶ &
+		"				" & ¶ &
+		"				.month-year {" & ¶ &
+		"					display: flex;" & ¶ &
+		"					align-items: baseline;" & ¶ &
+		"					gap: 5px;" & ¶ &
+		"				}" & ¶ &
+		"				" & ¶ &
+		"				#month-name {" & ¶ &
+		"					font-size: 1.5em;" & ¶ &
+		"					font-weight: bold;" & ¶ &
+		"				}" & ¶ &
+		"				" & ¶ &
+		"				#year-name {" & ¶ &
+		"					font-size: 1.2em;" & ¶ &
+		"					font-weight: 600;" & ¶ &
+		"					color: #555;" & ¶ &
+		"				}" & ¶ &
+		"				" & ¶ &
+		"				.calendar-nav {" & ¶ &	
+		"					display: flex;" & ¶ &
+		"					align-items: baseline;" & ¶ &
+		"					gap: 5px;" & ¶ &
+		"				}" & ¶ &
+		"				" & ¶ &
+		"				.calendar-nav button {" & ¶ &
+		"					border: none;" & ¶ &
+		"					background: transparent;" & ¶ &
+		"					cursor: pointer;" & ¶ &
+		"					font-size: 1.2em;" & ¶ &
+		"					color: #555;" & ¶ &
+		"					transition: color 0.3s;" & ¶ &
+		"				}" & ¶ &
+		"				" & ¶ &
+		"				.calendar-nav button:hover {" & ¶ &
+		"					color: #000;" & ¶ &
+		"				}" & ¶ &
+		
 		"			" & ¶ &
 		"				.calendar-weekdays, .calendar-days {" & ¶ &
 		"					display: grid;" & ¶ &
@@ -127,11 +213,15 @@ Let ( [
 		"			" & ¶ &
 		"			<div class=\"calendar\">" & ¶ &
 		"				<div class=\"calendar-header\">" & ¶ &
-		"					<button onclick=\"prevYear()\">«</button>" & ¶ &
-		"					<button onclick=\"prevMonth()\">‹</button>" & ¶ &
-		"					<div id=\"month-year\" class=\"month-name\" onclick=\"jumpToCurrentMonth()\"></div>" & ¶ &
-		"					<button onclick=\"nextMonth()\">›</button>" & ¶ &
-		"					<button onclick=\"nextYear()\">»</button>" & ¶ &
+		"					<div class=\"header-date\">" & ¶ &
+		"						<span class=\"month\" id=\"month-name\"></span>" & ¶ &
+		"						<span class=\"year\" id=\"year-name\"></span>" & ¶ &
+		"					</div>" & ¶ &
+		"					<div class=\"header-buttons\">" & ¶ &
+		"						<button onclick=\"prevMonth()\">◀</button>" & ¶ &
+		"						<span class=\"dot\" onclick=\"jumpToCurrentMonth()\"></span>" & ¶ &
+		"						<button onclick=\"nextMonth()\">▶</button>" & ¶ &
+		"					</div>" & ¶ &
 		"				</div>" & ¶ &
 		"				<div class=\"calendar-weekdays\"></div>" & ¶ &
 		"				<div class=\"calendar-days\"></div>" & ¶ &
@@ -203,11 +293,13 @@ Let ( [
 		"				}" & ¶ &
 		"			" & ¶ &		
 		"				function renderCalendar() {" & ¶ &
-		"					const monthYear = document.getElementById(\"month-year\");" & ¶ &
 		"					const daysContainer = document.querySelector(\".calendar-days\");" & ¶ &
 		"					const weekdaysContainer = document.querySelector(\".calendar-weekdays\");" & ¶ &
+		"					" & ¶ &
+		"					// Render month and year separately" & ¶ &
+		"					document.getElementById(\"month-name\").textContent = currentDate.toLocaleString('default', { month: 'long' });" & ¶ &
+		"					document.getElementById(\"year-name\").textContent = currentDate.getUTCFullYear();" & ¶ &
 		"				" & ¶ &
-		"					monthYear.textContent = `${currentDate.toLocaleString('default', { month: 'long' })} ${currentDate.getUTCFullYear()}`;" & ¶ &
 		"					weekdaysContainer.innerHTML = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']" & ¶ &
 		"						.map(day => `<div>${day}</div>`).join('');" & ¶ &
 		"				" & ¶ &
@@ -221,14 +313,14 @@ Let ( [
 		"					for (let i = firstDay; i > 0; i--) {" & ¶ &
 		"						daysContainer.innerHTML += `<div class=\"other-month\">${prevMonthLastDate - i + 1}</div>`;" & ¶ &
 		"					}" & ¶ &
-		"				" & ¶ &
+		"				" & ¶ &		
 		"					// Render current month with selection and blocked dates" & ¶ &
 		"					for (let day = 1; day <= lastDate; day++) {" & ¶ &
 		"						const date = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), day));" & ¶ &
 		"						const formattedDate = date.toISOString().split('T')[0];  " & ¶ &
-		"				" & ¶ &
+		"					" & ¶ &
 		"						const classes = [];" & ¶ &
-		"				" & ¶ &
+		"					" & ¶ &
 		"						// Highlight today's date (UTC-safe)" & ¶ &
 		"						const today = new Date(Date.UTC(" & ¶ &
 		"							new Date().getUTCFullYear()," & ¶ &
@@ -236,22 +328,23 @@ Let ( [
 		"							new Date().getUTCDate()" & ¶ &
 		"						));" & ¶ &
 		"						if (date.getTime() === today.getTime()) classes.push('today');" & ¶ &
-		"				" & ¶ &
-		"						// Highlight start, end, and in-range dates BEFORE blocked dates" & ¶ &
+		"					" & ¶ &
+		"						// Highlight start, end, and in-range dates" & ¶ &
 		"						const isStart = startDate && date.getTime() === startDate.getTime();" & ¶ &
 		"						const isEnd = endDate && date.getTime() === endDate.getTime();" & ¶ &
 		"						const inRange = startDate && endDate && date > startDate && date < endDate;" & ¶ &
-		"				" & ¶ &
+		"					" & ¶ &
+		"						// Apply start-date immediately after first selection" & ¶ &
 		"						if (isStart) classes.push('start-date');" & ¶ &
 		"						if (isEnd) classes.push('end-date');" & ¶ &
 		"						if (inRange && isDateRange) classes.push('in-range');" & ¶ &
-		"				" & ¶ &
+		"					" & ¶ &
 		"						// Apply blocked date class AFTER marking selected dates" & ¶ &
 		"						const isBlocked = isBlockedMode ? blockedDates.has(formattedDate) : !blockedDates.has(formattedDate);" & ¶ &
 		"						if (isBlocked) {" & ¶ &
 		"							classes.push('blocked-date');" & ¶ &
 		"						}" & ¶ &
-		"				" & ¶ &
+		"					" & ¶ &
 		"						daysContainer.innerHTML += `" & ¶ &
 		"							<div onclick=\"selectDate(${day}, '${formattedDate}')\" class=\"${classes.join(' ')}\">" & ¶ &
 		"								${day}" & ¶ &
@@ -289,13 +382,16 @@ Let ( [
 		"									// Select the first date or reset range if both dates already selected" & ¶ &
 		"									startDate = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), day));" & ¶ &
 		"									endDate = null;  // Reset end date until the second date is picked" & ¶ &
+		"						" & ¶ &
+		"									// Re-render immediately to mark the start date visually" & ¶ &
+		"									renderCalendar();" & ¶ &
 		"								} else {" & ¶ &
 		"									// Select the second date" & ¶ &
 		"									endDate = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), day));" & ¶ &
 		"						" & ¶ &
-		"									// Swap dates if they are reversed" & ¶ &
+		"									// Swap dates if reversed" & ¶ &
 		"									if (startDate > endDate) {" & ¶ &
-		"										[startDate, endDate] = [endDate, startDate];  // Swap to ensure correct order" & ¶ &
+		"										[startDate, endDate] = [endDate, startDate];" & ¶ &
 		"									}" & ¶ &
 		"						" & ¶ &
 		"									// Check if range contains blocked dates" & ¶ &
@@ -321,10 +417,9 @@ Let ( [
 		"								renderCalendar();" & ¶ &
 		"							}" & ¶ &
 		"						}" & ¶ &
-		"			" & ¶ &
 		
+		"			" & ¶ &
 		"			//  Send date data to FileMaker" & ¶ &
-
 		"			function sendToFileMakerBlockedError(callback) {" & ¶ &
 		"				const errorPayload = {" & ¶ &
 		"					messages: [" & ¶ &
@@ -346,8 +441,6 @@ Let ( [
 		"				}, 10);  // Slight delay ensures script execution before rendering" & ¶ &
 		"			}" & ¶ &
 		"			" & ¶ &
-		
-		
 		"			// Send valid date selections to FileMaker" & ¶ &
 		"			function sendToFileMaker() {" & ¶ &
 		"				const formatDate = (date) => date.toISOString().split('T')[0].replace(/-/g, '+');" & ¶ &
@@ -363,7 +456,6 @@ Let ( [
 		"				// Perform the script in FileMaker with the selected dates" & ¶ &
 		"				window.FileMaker.PerformScript(fileMakerScript, JSON.stringify(payload));" & ¶ &
 		"			}" & ¶ &
-
 		"			" & ¶ &		
 		"			//  Is range blocked helper function" & ¶ &
 		"			function isRangeBlocked(start, end) {" & ¶ &
@@ -469,8 +561,8 @@ Let ( [
 // fileMakerScript : Name of FileMaker script to launch upon selecting date(s) ( CAL_responseHandler )
 // dateStart : Initialising start date
 // dateEnd : Initialising end date (optional when calendar is in range mode)
-// isDateRange : Boolean ( true or false ) passed as string
-// blockedDates : Array of dates passed as [ "YYYY+MM+DD", "YYYY+MM+DD", "YYYY+MM+DD", "YYYY+MM+DD" ]
+// isDateRange : Boolean ( true or false ) passed as string 
+// blockedDates : Array of dates passed as [ "YYYY-MM-DD", "YYYY-MM-DD", "YYYY-MM-DD", "YYYY-MM-DD" ] 
 // isBlockedMode : Boolean ( true or false ) passed as string
 // allowBlockedInRange : Boolean ( true or false ) passed as string
 // targetDateStart : Field name in given in current context ( myTable::dateStart )
