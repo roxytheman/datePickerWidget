@@ -98,6 +98,8 @@ Let ( [
 		"			" & ¶ &
 		"				.today {" & ¶ &
 		"					font-weight: bold;" & ¶ &
+		"					color: var(--colour-dates);" & ¶ &
+		"					background: transparent;" & ¶ &
 		"					border: 1px solid var(--colour-selected);" & ¶ &
 		"				}" & ¶ &
 		"			" & ¶ &
@@ -266,67 +268,103 @@ Let ( [
 		"				}" & ¶ &
 		"				" & ¶ &
 		"				//  Select date function" & ¶ &
-		"				function selectDate(day, date) {" & ¶ &
-		"					if (blockedDates.has(date)) {" & ¶ &
-		"						blockedClickCount++;" & ¶ &
-		"				" & ¶ &
-		"						if (blockedClickCount >= 3) {" & ¶ &
-		"							sendToFileMakerBlockedError();" & ¶ &
-		"							blockedClickCount = 0;" & ¶ &
-		"						}" & ¶ &
-		"						return;" & ¶ &
-		"					}" & ¶ &
-		"				" & ¶ &
-		"					blockedClickCount = 0;  // Reset counter" & ¶ &
-		"				" & ¶ &
-		"					if (isDateRange) {" & ¶ &
-		"						if (!startDate || (startDate && endDate)) {" & ¶ &
-		"							// Select the first date or reset range if both dates already selected" & ¶ &
-		"							startDate = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), day));" & ¶ &
-		"							endDate = null;  // Reset end date until second date is picked" & ¶ &
-		"						} else {" & ¶ &
-		"							// Select the second date" & ¶ &
-		"							endDate = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), day));" & ¶ &
-		"				" & ¶ &
-		"							// Swap dates if they are reversed" & ¶ &
-		"							if (startDate > endDate) {" & ¶ &
-		"								[startDate, endDate] = [endDate, startDate];  // Swap to ensure correct order" & ¶ &
+		
+		"						function selectDate(day, date) {" & ¶ &
+		"							if (blockedDates.has(date)) {" & ¶ &
+		"								blockedClickCount++;" & ¶ &
+		"						" & ¶ &
+		"								if (blockedClickCount >= 3) {" & ¶ &
+		"									sendToFileMakerBlockedError(() => {" & ¶ &
+		"										blockedClickCount = 0;" & ¶ &
+		"										renderCalendar();" & ¶ &
+		"									});" & ¶ &
+		"								}" & ¶ &
+		"								return;" & ¶ &
 		"							}" & ¶ &
-		"				" & ¶ &
-		"							// Check if range contains blocked dates" & ¶ &
-		"							if (!allowBlockedInRange && isRangeBlocked(startDate, endDate)) {" & ¶ &
-		"								sendToFileMakerBlockedError();  // Fire error script" & ¶ &
-		"								startDate = null;  // Clear selection to prevent invalid range" & ¶ &
-		"								endDate = null;" & ¶ &
+		"						" & ¶ &
+		"							blockedClickCount = 0;  // Reset counter" & ¶ &
+		"						" & ¶ &
+		"							if (isDateRange) {" & ¶ &
+		"								if (!startDate || (startDate && endDate)) {" & ¶ &
+		"									// Select the first date or reset range if both dates already selected" & ¶ &
+		"									startDate = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), day));" & ¶ &
+		"									endDate = null;  // Reset end date until the second date is picked" & ¶ &
+		"								} else {" & ¶ &
+		"									// Select the second date" & ¶ &
+		"									endDate = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), day));" & ¶ &
+		"						" & ¶ &
+		"									// Swap dates if they are reversed" & ¶ &
+		"									if (startDate > endDate) {" & ¶ &
+		"										[startDate, endDate] = [endDate, startDate];  // Swap to ensure correct order" & ¶ &
+		"									}" & ¶ &
+		"						" & ¶ &
+		"									// Check if range contains blocked dates" & ¶ &
+		"									if (!allowBlockedInRange && isRangeBlocked(startDate, endDate)) {" & ¶ &
+		"										sendToFileMakerBlockedError(() => {" & ¶ &
+		"											setTimeout(() => {" & ¶ &
+		"												startDate = null;  " & ¶ &
+		"												endDate = null;  " & ¶ &
+		"												renderCalendar();  // Only re-render for invalid ranges" & ¶ &
+		"											}, 20);" & ¶ &
+		"										});" & ¶ &
+		"									} else {" & ¶ &
+		"										// Valid range → fire script and render normally" & ¶ &
+		"										sendToFileMaker();" & ¶ &
+		"										renderCalendar();" & ¶ &
+		"									}" & ¶ &
+		"								}" & ¶ &
 		"							} else {" & ¶ &
+		"								// Single date mode → fire script immediately" & ¶ &
+		"								startDate = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), day));" & ¶ &
+		"								endDate = null;  " & ¶ &
 		"								sendToFileMaker();" & ¶ &
+		"								renderCalendar();" & ¶ &
 		"							}" & ¶ &
 		"						}" & ¶ &
-		"					} else {" & ¶ &
-		"						// Single date mode: Select date and immediately fire the script" & ¶ &
-		"						startDate = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), day));" & ¶ &
-		"						endDate = null;  " & ¶ &
-		"						sendToFileMaker();" & ¶ &
+		"			" & ¶ &
+		
+		"			//  Send date data to FileMaker" & ¶ &
+
+		"			function sendToFileMakerBlockedError(callback) {" & ¶ &
+		"				const errorPayload = {" & ¶ &
+		"					messages: [" & ¶ &
+		"						{" & ¶ &
+		"							code: 500," & ¶ &
+		"							message: \"Date value does not meet validation entry options\"" & ¶ &
+		"						}" & ¶ &
+		"					]" & ¶ &
+		"				};" & ¶ &
+		"			" & ¶ &
+		"				// Use a slight delay to ensure the script fires before rendering" & ¶ &
+		"				setTimeout(() => {" & ¶ &
+		"					window.FileMaker.PerformScript(fileMakerScript, JSON.stringify(errorPayload));" & ¶ &
+		"			" & ¶ &
+		"					// Execute the callback after the script fires" & ¶ &
+		"					if (typeof callback === 'function') {" & ¶ &
+		"						callback();" & ¶ &
 		"					}" & ¶ &
-		"				" & ¶ &
-		"					renderCalendar();" & ¶ &
-		"				}" & ¶ &
+		"				}, 10);  // Slight delay ensures script execution before rendering" & ¶ &
+		"			}" & ¶ &
 		"			" & ¶ &
-		"				//  Send date data to FileMaker" & ¶ &
-		"				function sendToFileMaker() {" & ¶ &
-		"					const formatDate = (date) => date.toISOString().split('T')[0].replace(/-/g, '+');" & ¶ &
+		
+		
+		"			// Send valid date selections to FileMaker" & ¶ &
+		"			function sendToFileMaker() {" & ¶ &
+		"				const formatDate = (date) => date.toISOString().split('T')[0].replace(/-/g, '+');" & ¶ &
 		"			" & ¶ &
-		"					const payload = {" & ¶ &
-		"						dateStart: startDate ? formatDate(startDate) : \"\"," & ¶ &
-		"						dateEnd: endDate ? formatDate(endDate) : \"\"," & ¶ &
-		"						targetStart: window.targetStart || \"{{targetDateStart}}\", " & ¶ &
-		"						targetEnd: window.targetEnd || \"{{targetDateEnd}}\"," & ¶ &
-		"						refresh: window.refreshData || {}" & ¶ &
-		"					};" & ¶ &
+		"				const payload = {" & ¶ &
+		"					dateStart: startDate ? formatDate(startDate) : \"\"," & ¶ &
+		"					dateEnd: endDate ? formatDate(endDate) : \"\"," & ¶ &
+		"					targetStart: window.targetStart || \"{{targetDateStart}}\", " & ¶ &
+		"					targetEnd: window.targetEnd || \"{{targetDateEnd}}\"," & ¶ &
+		"					refresh: window.refreshData || {}" & ¶ &
+		"				};" & ¶ &
 		"			" & ¶ &
-		"					window.FileMaker.PerformScript(fileMakerScript, JSON.stringify(payload));" & ¶ &
-		"				}" & ¶ &
-		"			" & ¶ &
+		"				// Perform the script in FileMaker with the selected dates" & ¶ &
+		"				window.FileMaker.PerformScript(fileMakerScript, JSON.stringify(payload));" & ¶ &
+		"			}" & ¶ &
+
+		"			" & ¶ &		
 		"			//  Is range blocked helper function" & ¶ &
 		"			function isRangeBlocked(start, end) {" & ¶ &
 		"				const current = new Date(start);" & ¶ &
